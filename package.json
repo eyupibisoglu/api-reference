@@ -1,0 +1,39 @@
+{
+  "name": "api-reference",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "./node_modules/apidoc/bin/apidoc -i routes/ -o doc/ && node app.js",
+    "test": "export NODE_ENV=test && ./node_modules/mocha/bin/mocha --check-leaks -- tests/**/*test.js"
+  },
+  "engines": {
+    "node": "9.9.0",
+    "npm": "5.6.0"
+  },
+  "author": "ibisoglueyup@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "apidoc": "^0.17.6",
+    "bcrypt": "^2.0.1",
+    "body-parser": "^1.18.2",
+    "boom": "^7.2.0",
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "config": "^1.30.0",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "express-joi-validator": "^2.0.0",
+    "express-mung": "^0.5.0",
+    "faker": "^4.1.0",
+    "joi": "^13.2.0",
+    "jsonwebtoken": "^8.2.2",
+    "lodash": "^4.17.10",
+    "mongoose": "^5.0.15"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "mocha": "^5.1.1",
+    "should": "^13.2.1"
+  }
+}

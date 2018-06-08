@@ -1,0 +1,11 @@
+{
+    "name": "Reference API",
+    "version": "1.0.0",
+    "description": "This is a API",
+    "title": "API",
+    "url": "http://localhost:5000",
+    "template": 
+    {
+        "forceLanguage": "en"
+    }
+}
