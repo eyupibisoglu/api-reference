@@ -9,7 +9,7 @@ const Log 		 = require('../models/Log')
 
 class LogController
 {
-    static async getLogs (req, res)
+    static async getLogs (req, res, next)
     {
         try
         {
@@ -20,11 +20,11 @@ class LogController
         }
         catch (error)
         {
-            res.status(500).json(error)
+            next(error)
         }
     }
 
-    static async getLog (req, res)
+    static async getLog (req, res, next)
     {
         try
         {
@@ -35,7 +35,7 @@ class LogController
         }
         catch (error)
         {
-            res.status(500).json(error)
+            next(error)
         }
     }
 }

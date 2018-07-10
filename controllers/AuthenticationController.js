@@ -11,32 +11,28 @@ const User 		 = require('../models/User')
 
 class AuthenticationController
 {
-    static async authenticate (req, res)
+    static async authenticate (req, res, next)
     {
         try
         {
             const { email, password } = req.body
-
-            const user = await User.findOne({ "email": email })
-
-           
+    
+            const user = await User.findOne({ email })
+            
             const expiresIn = Config.jwt.expiresIn
             const secret    = Config.jwt.secret
             const data      = { _id: user._id }
-
+    
             // Generating token.
             const accessToken = await JWTUtil.sign({ data }, secret, { expiresIn })
-            
+
             res.json({ user, accessToken })
-                
         }
-        catch ( error )
+        catch (error)
         {
-            if ( error.isBoom )
-                res.status(error.output.payload.statusCode).json(error.output.payload)
-            else
-                res.status(500).json(error)
+            next(error)
         }
+       
     }
 
     

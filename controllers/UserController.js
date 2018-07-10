@@ -10,7 +10,7 @@ const User 		 = require('../models/User')
 
 class UserController
 {
-    static async getUsers (req, res)
+    static async getUsers (req, res, next)
     {
         const limit = _.toNumber(req.query.limit || 0) // Limit `0` is equal to select all documents.
 	
@@ -23,11 +23,11 @@ class UserController
         }
         catch (error)
         {
-            res.status(500).json(error)
+            next(error)
         }
     }
 
-    static async getUser (req, res)
+    static async getUser (req, res, next)
     {
         try
         {
@@ -41,7 +41,7 @@ class UserController
         }
         catch (error)
         {
-            res.status(500).json(error)
+            next(error)
         }
     }
 
@@ -49,11 +49,12 @@ class UserController
     {
         try
         {
-            let _user 	     = req.body
-            _user.password = await Bcrypt.hash(_user.password, Config.get('bcrypt.saltRounds'))
+            const email      = req.body.email
 
-            const user = await User.create( _user )
-            res.json(user)
+            await User.create( req.body )
+            const user = await User.findOne({ email }, { password: 0 })
+            
+            res.status(201).json(user)
         }
         catch ( error )
         {

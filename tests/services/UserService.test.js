@@ -11,35 +11,33 @@ const User 		 = require('../../models/User')
 let chai   = require('chai')
 let server = require('../../app')
 
-
 chai.use(require('chai-http'))
 
-before(async () =>
-{
-	await User.remove({})
-	const users = _.times(10, () => User.create({"name": Faker.name.firstName(), "surname": Faker.name.lastName(), "email": Faker.internet.email(), "password": Faker.internet.password()}))
-	await Promise.all( users )
-})
 
-after(async () =>
-{
-	await User.remove({})
-})
 
 describe('/api/v1/users', async () => 
 {
+    before(async () =>
+    {
+        await User.remove({})
+        const users = _.times(10, () => User.create({"name": Faker.name.firstName(), "surname": Faker.name.lastName(), "email": Faker.internet.email(), "password": Faker.internet.password()}))
+        await Promise.all( users )
+    })
+    
+   
+    
 	describe('GET /api/v1/users', () => 
 	{
+         
 		it('should get users', async () => 
 		{
 			const users = await User.find()
 
-			chai.request(server).get('/api/v1/users').end((err, res) => 
-			{
-				Should(res.status).be.equal(200)
-				Should(res.body).be.an.instanceOf(Array)
-				Should(res.body.length).be.equal(users.length)
-			})
+			const res = await chai.request(server).get('/api/v1/users')
+
+            Should(res.status).be.equal(200)
+            Should(res.body).be.an.instanceOf(Array)
+            Should(res.body.length).be.equal(users.length)
 		})
 
 		it('should get limited users', async () => 
@@ -47,12 +45,11 @@ describe('/api/v1/users', async () =>
 			const limit = 2
 			const users = await User.find().limit(limit)
 
-			chai.request(server).get('/api/v1/users?limit=' + limit).end((err, res) => 
-			{
-				Should(res.status).be.equal(200)
-				Should(res.body).be.an.instanceOf(Array)
-				Should(res.body.length).be.equal(users.length)
-			})
+            const res = await chai.request(server).get('/api/v1/users?limit=' + limit)
+            
+            Should(res.status).be.equal(200)
+            Should(res.body).be.an.instanceOf(Array)
+            Should(res.body.length).be.equal(users.length)
 		})
 	})
 
@@ -62,22 +59,20 @@ describe('/api/v1/users', async () =>
 		{
 			const user = await User.findOne()
 
-			chai.request(server).get('/api/v1/users/' + user._id).end((err, res) => 
-			{
-				Should(res.status).be.equal(200)
-				Should(res.body).be.an.instanceOf(Object)
-				Should(res.body.name).be.equal(user.name)
-			})
+            const res = await chai.request(server).get('/api/v1/users/' + user._id)
+            
+            Should(res.status).be.equal(200)
+            Should(res.body).be.an.instanceOf(Object)
+            Should(res.body.name).be.equal(user.name)
 		})
 
 		it('should return 204', async () => 
 		{
-			const id = '507f1f77bcf86cd799439011'
+			const id = Mongoose.Types.ObjectId();
 
-			chai.request(server).get('/api/v1/users/' + id).end((err, res) => 
-			{
-				Should(res.status).be.equal(204)
-			})
+            const res = await chai.request(server).get('/api/v1/users/' + id)
+            
+            Should(res.status).be.equal(204)
 		})
 	})
 
@@ -90,15 +85,14 @@ describe('/api/v1/users', async () =>
 			const email    = Faker.internet.email()
 			const password = Faker.internet.password()
 
-			chai.request(server).post('/api/v1/users').send({ name, surname, email, password }).end((err, res) => 
-			{
-				Should(res.status).be.equal(201)
-				Should(res.body).be.an.instanceOf(Object)
-				Should(res.body.name).be.equal(name)
-				Should(res.body.surname).be.equal(surname)
-				Should(res.body.email).be.equal(email)
-				Should(res.body.password).be.equal(undefined)
-			})
+            const res = await chai.request(server).post('/api/v1/users').send({ name, surname, email, password })
+            
+            Should(res.status).be.equal(201)
+            Should(res.body).be.an.instanceOf(Object)
+            Should(res.body.name).be.equal(name)
+            Should(res.body.surname).be.equal(surname)
+            Should(res.body.email).be.equal(email)
+            Should(res.body.password).be.equal(undefined)
 		})
 	})
 })

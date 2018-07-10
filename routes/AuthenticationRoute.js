@@ -1,6 +1,6 @@
 // ### Validations ###
 const { emailRequired, passwordRequired } = require('../validations/ParameterValidation')
-const { isUserExists }                    = require('../validations/UserValidation')
+const { isUserExists, isUserEmailExists } = require('../validations/UserValidation')
 
 const AuthenticationController = require('../controllers/AuthenticationController')
 
@@ -27,6 +27,7 @@ const router = require('express').Router()
 router.post('/authenticate', 
     emailRequired, 
     passwordRequired,
+    isUserEmailExists,
     isUserExists,
         AuthenticationController.authenticate)
 

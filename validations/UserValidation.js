@@ -17,28 +17,39 @@ class UserValidation
         {
             const { email, password } = req.body
 
-            // Checking email.
             const user = await User.findOne({ email })
+            const isPasswordOk = await Bcrypt.compare(password, _.get(user, 'password', null))
 
-            if ( !user )
-                throw Boom.unauthorized('Email is not found.')
-
-            // Checking password.
-            const isPasswordOk = await Bcrypt.compare(password, user.password)
-
+      
+                
             if ( !isPasswordOk )
-                throw Boom.unauthorized('Password is wrong.')
-
-            next()
+                next(Boom.unauthorized('Password is wrong.'))
+            else
+                next()
         }
         catch (error)
         {
-            if ( error.isBoom )
-                res.status(error.output.payload.statusCode).json(error.output.payload)
-            else
-                res.status(500).json(error)
-        }
+            next(error) 
+        }  
     } 
+
+    static async isUserEmailExists ( req, res, next )
+    {
+        try
+        {
+            const { email } = req.body
+            const user = await User.findOne({ email })
+
+            if ( user )
+                next()
+            else
+                next(Boom.unauthorized('User is not found.'))
+        }
+        catch (error)
+        {
+            next(error)
+        }
+    }
         
 }
 

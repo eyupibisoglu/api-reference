@@ -1,6 +1,6 @@
-const Joi = require('joi')
-const _   = require('lodash')
-
+const Joi  = require('joi')
+const _    = require('lodash')
+const Boom = require('boom')
 class ParameterValidation
 {
 
@@ -11,7 +11,7 @@ class ParameterValidation
         const result = Joi.validate(( req.method === 'GET' ) ? req.query : req.body, { email }, { allowUnknown: true })
 
         if ( _.get(result, 'error.details') )
-            res.status(500).json(result.error.details[0])
+            next(Boom.conflict(result.error.details[0].message))
         else
             next()
     }
@@ -22,7 +22,7 @@ class ParameterValidation
         const result   = Joi.validate(( req.method === 'GET' ) ? req.query : req.body, { password }, { allowUnknown: true })
 
         if ( _.get(result, 'error.details') )
-            res.status(500).json(result.error.details[0])
+            next(Boom.conflict(result.error.details[0].message))
         else
             next()
     }
@@ -33,7 +33,7 @@ class ParameterValidation
         const result = Joi.validate(( req.method === 'GET' ) ? req.query : req.body, { limit }, { allowUnknown: true })
 
         if ( _.get(result, 'error.details') )
-            res.status(500).json(result.error.details[0])
+            next(Boom.conflict(result.error.details[0].message))
         else
             next()
     }

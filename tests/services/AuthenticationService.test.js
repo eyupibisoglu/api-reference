@@ -16,38 +16,91 @@ chai.use(require('chai-http'))
 
 
 
-describe('/api/v1/authentication', async () => 
-{
-	describe('POST /api/v1/authentication/authenticate', () => 
+
+    
+
+	describe('Authentication', () =>
 	{
-		it('should create an user and return 200', async () => 
-		{
-            const email    = Faker.internet.email()
-            const password = Faker.internet.password()
-            
-            const user = await User.create({ email, password })
-
-			chai.request(server).post('/api/v1/authentication/authenticate').send({ email, password }).end((err, res) => 
-			{
-				Should(res.status).be.equal(200)
-				Should(res.body).be.an.instanceOf(Object)
-				Should(res.body.email).be.equal(email)
-				Should(res.body.password).be.equal(undefined)
-			})
+        before(async () =>
+        {
+            try
+            {
+                await User.remove({})
+                const users = _.times(10, () => ({"name": Faker.name.firstName(), "surname": Faker.name.lastName(), "email": Faker.internet.email(), "password": Faker.internet.password()}))
+                await User.insertMany( users )
+            }
+            catch (error)
+            {
+                console.log('#error A1', error)
+            }
         })
-        
-        it('should return 401', async () => 
-		{
-			const email    = Faker.internet.email()
-			const password = Faker.internet.password()
 
-			chai.request(server).post('/api/v1/authentication/authenticate').send({ email, password }).end((err, res) => 
-			{
-				Should(res.status).be.equal(401)
-				Should(res.body).be.an.instanceOf(Object)
-				Should(res.body.message).be.equal('Email is not found.')
-			})
+        after(async () =>
+        {
+            await User.remove({})
+        }) 
+
+        describe('POST /api/v2/authentication/authenticate', () =>
+	    {               
+            it('should return 200', async () =>
+            {
+                const email    = Faker.internet.email()
+                const password = Faker.internet.password()
+                
+                const user = await User.create({ email, password })
+                const res  = await chai.request(server).post('/api/v1/authentication/authenticate').send({ email, password })
+
+                Should(res.status).be.equal(200)
+                Should(res.body).have.property('user')
+                Should(res.body.user).have.property('email', email) 
+                Should(res.body).have.property('accessToken')   
+                Should(res.body.user).have.not.property('password', undefined)            
+            })
+
+            it('should return 409 abcence of email that belongs to registered user.', async () =>
+            {
+                const email    = Faker.internet.email()
+                const password = Faker.internet.password()
+                
+                const user = await User.create({ email, password })
+                const res  = await chai.request(server).post('/api/v1/authentication/authenticate').send({ email })
+
+                Should(res.status).be.equal(409)
+                Should(res.body).have.property('message', '"password" is required')        
+            })
+
+            it('should return 401 (Non Exists User)', async () => 
+            {
+                const email    = Faker.internet.email()
+                const password = Faker.internet.password()
+
+                const res = await chai.request(server).post('/api/v1/authentication/authenticate').send({ email, password })
+
+                Should(res.status).be.equal(401)
+                Should(res.body).have.property('message', 'User is not found.')     
+            })
+
+            it('should return 500 beacuse abcence of email', async () => 
+            {
+                const password = Faker.internet.password()
+
+                const res = await chai.request(server).post('/api/v1/authentication/authenticate').send({ password })
+                
+                Should(res.status).be.equal(409)
+                Should(res.body).have.property('message', '"email" is required') 
+                
+            })
+
+            it('should return 500 beacuse abcence of password', async () => 
+            {
+                const email = Faker.internet.email()
+
+                const res = await chai.request(server).post('/api/v1/authentication/authenticate').send({ email })
+                
+                Should(res.status).be.equal(409)
+                Should(res.body).be.an.instanceOf(Object)
+                Should(res.body.message).be.equal('"password" is required')
+                
+            })
         })
-        
 	})
-})
