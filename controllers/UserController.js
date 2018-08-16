@@ -4,7 +4,7 @@ const _ 	   = require('lodash')
 const Bcrypt   = require('bcrypt')
 
 // ### Database ###
-const Connection = Mongoose.connect( Config.get('database.url') )
+const Connection = Mongoose.connect( Config.get('database.url'), { autoIndex: false })
 const User 		 = require('../models/User')
 
 

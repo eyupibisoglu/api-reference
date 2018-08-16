@@ -3,7 +3,7 @@ const Config   = require('config')
 const _ 	   = require('lodash')
 
 // ### Database ###
-const Connection = Mongoose.connect( Config.get('database.url') )
+const Connection = Mongoose.connect( Config.get('database.url'), { autoIndex: false })
 const Log 		 = require('../models/Log')
 
 

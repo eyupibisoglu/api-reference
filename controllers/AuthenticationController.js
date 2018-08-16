@@ -5,7 +5,7 @@ const JWTUtil  = require('../utils/JWTUtil')
 const Boom     = require('boom')
 
 // ### Database ###
-const Connection = Mongoose.connect( Config.get('database.url') )
+const Connection = Mongoose.connect( Config.get('database.url'), { autoIndex: false })
 const User 		 = require('../models/User')
 
 
