@@ -5,7 +5,7 @@ const _ 	   = require('lodash')
 const Should   = require('should')
 
 // ### Database ###
-const Connection = Mongoose.connect( Config.get('database.url') )
+Mongoose.connect( Config.get('database.url') )
 const User 		 = require('../../models/User')
 
 let chai   = require('chai')
@@ -24,7 +24,7 @@ describe('/api/v1/users', async () =>
         await Promise.all( users )
     })
     
-   
+    
     
 	describe('GET /api/v1/users', () => 
 	{
@@ -32,7 +32,6 @@ describe('/api/v1/users', async () =>
 		it('should get users', async () => 
 		{
 			const users = await User.find()
-
 			const res = await chai.request(server).get('/api/v1/users')
 
             Should(res.status).be.equal(200)

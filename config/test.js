@@ -1,3 +1,4 @@
+const testConfig = 
 {
 	"database":
 	{
@@ -11,3 +12,5 @@
 		}
 	}
 }
+
+module.exports = testConfig

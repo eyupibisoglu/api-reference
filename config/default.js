@@ -1,3 +1,4 @@
+const defaultConfig = 
 {
 	"database":
 	{
@@ -10,7 +11,7 @@
 			}
 		}
 	},
-	"port": "5000",
+	"port": process.env.PORT || 5000,
 	"jwt":
 	{
 		"secret": "api-reference",
@@ -21,3 +22,5 @@
 		"saltRounds": 10
 	}
 }
+
+module.exports = defaultConfig

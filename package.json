@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "./node_modules/apidoc/bin/apidoc -i routes/ -o doc/ && node app.js",
-    "test": "export NODE_ENV=test && ./node_modules/mocha/bin/mocha --check-leaks -- tests/**/*test.js"
+    "test": "export NODE_ENV=test && ./node_modules/mocha/bin/mocha --check-leaks --exit -- tests/**/*test.js"
   },
   "engines": {
     "node": "9.9.0",
